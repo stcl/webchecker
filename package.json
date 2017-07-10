@@ -1,0 +1,14 @@
+{
+  "name": "webchecker",
+  "version": "0.0.1",
+  "description": "Project for validating web page content",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "Jyrki Jakonen",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.15.3"
+  }
+}
