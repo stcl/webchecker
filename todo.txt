@@ -1,0 +1,15 @@
+fsecure-tehtävä
+
+1. Lukee websivujen listan ja sisällön vaatimukset konfiguraatiotiedostosta
+2. Tekee http-requesteja jokaiselle sivulle
+3. Katsoo että vaatimukset täyttyvät
+4. Mittaa ajan jonka requesti vaati
+5. Kirjoittaa lokifileen
+(6. HTTP server interface)
+
+tiedostonlukuoperaatio
+Express-projekti
+HTTP-tarkastus
+Timerin käyttö
+Lokifile
+arkkitehtuuridokumentaatio
