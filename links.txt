@@ -1,3 +1,3 @@
-http://www.google.com original
-http://www.elitisti.net original
-http://www.cityonfire.com default
+http://www.google.com ISO-8859-1
+http://www.elitisti.net UTF-8
+http://www.cityonfire.com UTF-8

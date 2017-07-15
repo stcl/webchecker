@@ -40,33 +40,38 @@ const rl = readline.createInterface({
 
 
 // Takes array of addresses to go though all
-function goThrough( lines ) {
-    lines.forEach(function(element) {
-        var opts = {
-            url: element,
-            timeout: 10000
-        }
-        request.get(opts, function(err, res, body) {
-            console.log( element );
-            if( err )
-                console.log( err );
-            if (!err && res.statusCode === 200) {
-                console.log("Page OK");
-                console.log( element );
-                console.log( res.statusCode );
-            }
-        });
+function goThrough( input ) {
 
-    }, this);
+    console.log( "input: " + input )
+
+    let element = input.split(' ', 1).toString()
+    let info = input.split(' ', 2)[1];
+
+    var opts = {
+        url: element,
+        timeout: 10000
+    }
+    request.get(opts, function (err, res, body) {
+        
+        // Get the content type
+        let contenttype = res.headers['content-type'];
+        // Compare that the line exists in content-type
+        if (contenttype.includes(info))
+            console.log("Type matches")
+
+        if (err)
+            console.log(err);
+        if (!err && res.statusCode === 200) {
+            console.log("Page OK");
+            console.log(res.statusCode);
+        }
+    });
+
+    //}, this);
 }
 
-rl.on('line', (input) => {
-    let split = input.split(' ', 1)
-    console.log( split )
-    lines = split
-    // check http
-    
+rl.on('line', (input) => {    
     // make timed interval
-    setInterval( goThrough, 1500, split);
+    setInterval( goThrough, 1500, input);
 });
 
