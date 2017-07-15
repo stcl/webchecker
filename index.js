@@ -38,20 +38,18 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
-rl.on('line', (input) => {
-    let split = input.split(' ', 1)
-    console.log( split )
-    lines = split;
-    // check http
 
+// Takes array of addresses to go though all
+function goThrough( lines ) {
     lines.forEach(function(element) {
-        request.get(element, function(err, res, body) {
-
+        var opts = {
+            url: element,
+            timeout: 10000
+        }
+        request.get(opts, function(err, res, body) {
             console.log( element );
-
             if( err )
                 console.log( err );
-
             if (!err && res.statusCode === 200) {
                 console.log("Page OK");
                 console.log( element );
@@ -60,6 +58,15 @@ rl.on('line', (input) => {
         });
 
     }, this);
+}
 
+rl.on('line', (input) => {
+    let split = input.split(' ', 1)
+    console.log( split )
+    lines = split
+    // check http
+    
+    // make timed interval
+    setInterval( goThrough, 1500, split);
 });
 
