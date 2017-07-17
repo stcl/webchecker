@@ -24,4 +24,10 @@ const Logger = new (winston.Logger)({
   ]
 });
 
+Logger.add = function( res ) {
+    Logger.info("URL: " + res.element +
+        " Statuscode: " + res.statusCode +
+        " Responsetime: " + res.responseTime)
+}
+
 module.exports = exports = Logger

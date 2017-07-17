@@ -7,8 +7,6 @@ const request = require('request')
 
 module.exports.makeRequest = function( input, callback ) {
 
-    winston.debug( "input: " + input )
-
     // todo check that input is alright
 
     let element = input.split(' ', 1).toString()
@@ -28,18 +26,18 @@ module.exports.makeRequest = function( input, callback ) {
         let contenttype = res.headers['content-type']
         // Compare that the line exists in content-type
         if (!contenttype.includes(info))
-            winston.info("Type does not match: " + info )
+            winston.error("Type " + info + " does not match to " + contenttype )
         // Get error case
         if (err)
             winston.error(err);
         else if (res.statusCode === 200) {
             winston.info("Page OK");
         }
+        res.contenttype = contenttype
+        res.element = element
+        res.responseTime = responseTime
 
-        res.element = element;
-        res.responseTime = responseTime;
-
-        callback( res );
-        // logging
+        if( callback )
+            callback( res )
     });
 }

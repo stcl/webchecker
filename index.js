@@ -12,10 +12,7 @@ const fs = require('fs');
 
 // 3rd party packages
 const winston = require('winston')
-const express = require('express')
-//const app = express()
 const url = require('url')
-const request = require('request')
 
 var myArgs = process.argv.slice(2);
 if( myArgs[0] ) {
@@ -30,16 +27,21 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
-// Takes array of addresses to go though all
+// Takes array of addresses
 
 rl.on('line', (input) => {
-    // make timed interval
+    // timed interval
     setInterval( monitor.makeRequest, config.waittime, input, function(res) {
+        logger.add( res );
+        /*
         logger.info( "URL: " + res.element + 
                     " Statuscode: " + res.statusCode + 
                     " Responsetime: " + res.responseTime )
-        }
-    )
+        }*/
+    
+    });
+})
 
-});
-
+rl.on('close', (input) => {
+    winston.info( "end of file");
+})
