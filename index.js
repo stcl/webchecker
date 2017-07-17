@@ -4,6 +4,7 @@
 
 // Other files
 const config = require('./config.json')
+const logger = require('./logger.js')
 
 // 1st party packages
 const fs = require('fs');
@@ -19,39 +20,10 @@ const bodyParser = require('body-parser')
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
-
-//app.get('/', function (req, res) {
-//  res.send('Hello World!')
-//})
-const logger = new (winston.Logger)({
-  transports: [
-    // colorize the output to the console
-    new (winston.transports.Console)({
-      colorize: true,
-      level: 'info'
-    }),
-    new (winston.transports.File)({
-      filename: `results.log`,
-      //timestamp: tsFormat,
-      level: 'info',
-      prepend: true
-
-    })
-  ]
-});
-
-//app.listen(3000, function () {
-//  console.log('Example app listening on port 3000!')
-//})
-
-/*app.post('/', function (req, res) {
-    var parsed_url = url.format({
-        query: {
-        q: req.body.text
-        }
-    });
-    res.send('Web page status: ' + parsed_url );
-});*/
+var myArgs = process.argv.slice(2);
+if( myArgs[0] ) {
+    config.waittime = myArgs[0]
+}
 
 let readline = require('readline')
 let inputFile = fs.createReadStream('links.txt')
@@ -64,9 +36,9 @@ const rl = readline.createInterface({
 
 
 // Takes array of addresses to go though all
-function goThrough( input ) {
+function makeRequest( input ) {
 
-    console.log( "input: " + input )
+    winston.debug( "input: " + input )
 
     let element = input.split(' ', 1).toString()
     let info = input.split(' ', 2)[1];
@@ -81,27 +53,25 @@ function goThrough( input ) {
     request.get(opts, function (err, res, body) {
 
         var responseTime = new Date() - start;
-        console.log( responseTime );
         // Get the content type
-        let contenttype = res.headers['content-type'];
+        let contenttype = res.headers['content-type']
         // Compare that the line exists in content-type
-        if (contenttype.includes(info))
-            console.log("Type matches")
+        if (!contenttype.includes(info))
+            winston.info("Type does not match: " + info )
+        // Get error case
         if (err)
-            console.log(err);
-        if (res.statusCode === 200) {
-            console.log("Page OK");
-            console.log(res.statusCode);
+            winston.error(err);
+        else if (res.statusCode === 200) {
+            winston.info("Page OK");
         }
-
         // logging
-        logger.info( input + " " + res.statusCode + " " + responseTime )
+        logger.info( "URL: " + element + " Statuscode: " + res.statusCode + " Responsetime: " + responseTime )
 
     });
 }
 
 rl.on('line', (input) => {    
     // make timed interval
-    setInterval( goThrough, config.waittime, input);
+    setInterval( makeRequest, config.waittime, input);
 });
 
