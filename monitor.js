@@ -25,13 +25,19 @@ module.exports.makeRequest = function( input, callback ) {
         // Get the content type
         let contenttype = res.headers['content-type']
         // Compare that the line exists in content-type
-        if (!contenttype.includes(info))
+        if (!contenttype.includes(info)) { 
             winston.error("Type " + info + " does not match to " + contenttype )
+            res.status = "NOK"
+        } else {  
+            res.status = "OK"
+        }
         // Get error case
-        if (err)
-            winston.error(err);
-        else if (res.statusCode === 200) {
-            winston.info("Page OK");
+        if (err) {
+            winston.error(err)
+            res.status = "NOK"
+        } else if (res.statusCode === 200) {
+            winston.info("Page OK")
+            res.status = "OK"
         }
         res.contenttype = contenttype
         res.element = element
