@@ -1,4 +1,4 @@
 {
-    "waittime": 1000,
+    "waittime": 5000,
     "timeout": 10000
 }
