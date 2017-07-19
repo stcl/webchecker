@@ -1,3 +1,4 @@
 http://www.google.com ISO-8859-1
 http://www.elitisti.net UTF-8
-http://www.cityonfire.com UTF-8
+http://www.engadget.com UTF-8
+http://www.ampparit.com NOK

@@ -21,7 +21,15 @@ module.exports.makeRequest = function( input, callback ) {
 
     request.get(opts, function (err, res, body) {
 
-        var responseTime = new Date() - start;
+        // Get error case, usually timeout
+        if (err) {
+            winston.error(err)
+            return
+        } else if (res.statusCode === 200) {
+            winston.info("Page OK")
+            res.status = "OK"
+        }
+        var responseTime = new Date() - start   // ping time
         // Get the content type
         let contenttype = res.headers['content-type']
         // Compare that the line exists in content-type
@@ -31,14 +39,7 @@ module.exports.makeRequest = function( input, callback ) {
         } else {  
             res.status = "OK"
         }
-        // Get error case
-        if (err) {
-            winston.error(err)
-            res.status = "NOK"
-        } else if (res.statusCode === 200) {
-            winston.info("Page OK")
-            res.status = "OK"
-        }
+
         res.contenttype = contenttype
         res.element = element
         res.responseTime = responseTime
