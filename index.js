@@ -6,6 +6,7 @@
 const config = require('./config.json')
 const logger = require('./logger.js')
 const monitor = require('./monitor.js')
+let State = require('./state.js')
 
 // 1st party packages
 const fs = require('fs');
@@ -34,44 +35,35 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
-let status = []   // State of the elements
-let count = 0;      // Count of the elements in file
+let countObjects = 0;      // Count of the elements in file
+let state = new State();
 
 // Takes every line of the file
 rl.on('line', (input) => {
-    count++;
+    countObjects++
     // timed interval, might cause trouble if waits too long
     setInterval( monitor.makeRequest, config.waittime, input, function(res) {
         logger.add( res );
-        // todo check uniques
-        if( status.length < count || stateHasChanged(res) )
-            status.push( { 'url': res.element, 'status': res.status } )
+        // replace the old value with new status
+        if( state.stateHasChanged(res) ) {
+            state.replaceStatus(res)
+        }   // otherwise just add to the state
+        else if( state.getStatus().length < countObjects ) {
+            state.addToState(res)
+        }
     })
 })
 
-/* Checks if the state of the status has changed and if it has, 
-   deletes the element so that it can be overwritten */
-function stateHasChanged(res) {
-    for (let i = 0; i < status.length; i++) {
-        if (status[i]['url'] == res.element) {
-            if (status[i]['status'] != res.status) {
-                status.splice(i, 1);
-                return true;
-            }
-        }
-    } 
-    return false;
-}
-
 rl.on('close', (input) => {
     //count++;
-    winston.info( "\nend of file");
+    console.log( "\nend of file");
 })
 
 app.get('/', function (req, res) {
     // Print the last lines
     const header = "<b>Status of the web pages:</b>"
     let content = "<p>";
+    const status = state.getStatus();
     for( let i=0; i<status.length;i++) {
         content += status[i]['url'] + ": " + status[i]['status'] + "<p>";
     }
